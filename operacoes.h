@@ -1,7 +1,5 @@
 #ifndef OPERACAO
 #define OPERACAO
-int Soma_Numeros(int A, int B);
-int Subtrai_Numeros(int A, int B);
-int Multiplica_Numeros(int A, int B);
-int Divide_Numeros(int A, int B);
+int somaPosicao(int vet[], int inicio, int fim);
+
 #endif

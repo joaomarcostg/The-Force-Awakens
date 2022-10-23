@@ -1,18 +1,11 @@
 #include "operacoes.h"
-int Soma_Numeros(int A, int B){
-    return A+B;
+
+int somaPosicao(int vet[], int inicio, int fim)
+{
+    int valor = 0;
+    for (int i = inicio; i < fim; i++)
+    {
+        valor += vet[i];
+    }
+    return valor;
 }
-int Subtrai_Numeros(int A, int B){
-    return A-B;
-}
-int Multiplica_Numeros(int A, int B){
-    return A*B;
-}
-int Divide_Numeros(int A, int B){
-    return A/B;
-}
-
-
-
-
-

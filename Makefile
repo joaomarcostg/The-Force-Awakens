@@ -1,9 +1,10 @@
-operacoes: operacoes.o main.o
-	gcc operacoes.o main.o -o tp
-main.o: main.c operacoes.h
-	gcc -g -c main.c
-operacoes.o: operacoes.h operacoes.c
-	    gcc -g -c operacoes.c 
+build:
+	gcc forceawakens.c operacoes.c -o tp
+
+run: 
+	./tp AG < testes.txt	
+
+start: build run
+
 clean:
-	rm tp
-	rm *.o *.gch
+	rm *.o	
