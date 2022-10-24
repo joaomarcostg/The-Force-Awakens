@@ -2,7 +2,7 @@ build:
 	gcc forceawakens.c operacoes.c -o tp
 
 run: 
-	./tp AG < testes.txt	
+	./tp FB < testes.txt	
 
 start: build run
 

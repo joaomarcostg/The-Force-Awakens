@@ -3,25 +3,26 @@
 #include <limits.h>
 #include <string.h>
 #include "operacoes.h"
+#define TRUE 1
 
 int ForcaBruta(int *distancia, int n, int k)
 {
-    int *s;
-    s = malloc((n + 1) * sizeof(int));
-    s[0] = 0;
+    int *vet;
+    vet = malloc((n + 1) * sizeof(int));
+    vet[0] = 0;
 
     int tam = 0;
-    int resultado = 99999;
-    while (1)
+    int resultado = INT_MAX;
+    while (TRUE)
     {
-        if (s[tam] < n)
+        if (vet[tam] < n)
         {
-            s[tam + 1] = s[tam] + 1;
+            vet[tam + 1] = vet[tam] + 1;
             tam += 1;
         }
         else
         {
-            s[tam - 1] += 1;
+            vet[tam - 1] += 1;
             tam -= 1;
         }
         if (tam == 0)
@@ -30,63 +31,54 @@ int ForcaBruta(int *distancia, int n, int k)
         if (tam == k)
         {
             int aux[tam + 1];
-            int j = 0;
-            for (j = 0; j < tam; j++)
+            int i = 0;
+            while (i < tam)
             {
-                aux[j] = somaPosicao(distancia, s[j], s[j + 1]);
+                aux[i] = soma(distancia, vet[i], vet[i + 1]);
+                i++;
             }
-            aux[j] = somaPosicao(distancia, s[j], n + 1);
-            int maxvalorVet = 0;
-            for (int r = 0; r < j + 1; r++)
+            aux[i] = soma(distancia, vet[i], n + 1);
+            int maiorValor = maior(aux, (i + 1));
+            if (maiorValor < resultado)
             {
-                if (maxvalorVet < aux[r])
-                    maxvalorVet = aux[r];
-            }
-            if (maxvalorVet < resultado)
-            {
-                resultado = maxvalorVet;
+                resultado = maiorValor;
             }
         }
     }
-    free(s);
+    free(vet);
     return resultado;
 }
 
 int AlgoritmoGuloso(int *distancia, int n, int k)
 {
-    int i, aux, aux2, contdiv, max;
-    aux = 0;
-    aux2 = 0;
-    contdiv = 0;
-    max = 0;
-    for (i = 0; i <= n; i++)
-        aux += distancia[i];
+    int i = 0, aux = 0, visitados = 0, max = 0;
+    int distanciaTotal = soma(distancia, 0, n + 1);
 
-    aux /= (k + 1);
+    int distanciaMin = distanciaTotal / (k + 1);
     for (i = 0; i <= n; i++)
     {
-        if (aux2 + distancia[i] > aux && contdiv < k)
+        if (aux + distancia[i] > distanciaMin && visitados < k)
         {
-            if (aux2 + distancia[i] - aux <= aux - aux2)
+            if (aux + distancia[i] - distanciaMin <= distanciaMin - aux)
             {
-                aux2 += distancia[i];
-                if (aux2 > max)
-                    max = aux2;
-                aux2 = 0;
-                contdiv++;
+                aux += distancia[i];
+                if (aux > max)
+                    max = aux;
+                aux = 0;
+                visitados++;
             }
-            else if (aux2 > max)
+            else if (aux > max)
             {
-                max = aux2;
-                aux2 = distancia[i];
-                contdiv++;
+                max = aux;
+                aux = distancia[i];
+                visitados++;
             }
         }
         else
-            aux2 += distancia[i];
+            aux += distancia[i];
     }
-    if (aux2 > max)
-        max = aux2;
+    if (aux > max)
+        max = aux;
 
     return max;
 }
@@ -116,9 +108,10 @@ int ProgramacaoDinamica(int *distancia, int n, int k)
                 max[cont1][cont2] = max[cont1][cont2 - 1];
                 continue;
             }
-            int maxesc = INT_MAX;
-            int auxesc = INT_MAX;
+            int maxEsc = INT_MAX;
+            int auxEsc = INT_MAX;
             int auxIter, auxIter2, maxIter, distanciaMax;
+
             for (cont3 = cont2 - 1; cont3 < cont1; cont3++)
             {
                 maxIter = max[cont3][cont2 - 1];
@@ -129,50 +122,19 @@ int ProgramacaoDinamica(int *distancia, int n, int k)
                 for (cont4 = cont3 + 1; cont4 <= cont1; cont4++)
                 {
                     auxIter2 = distanciaMax - auxIter;
-                    if (auxIter2 > auxIter)
+                    auxEsc = auxIter2;
+                    int comparacao[3] = {maxIter, auxIter, auxIter2};
+                    // Compara maxIter, auxIter e auxIter2, retornando o maior entre eles
+                    int maiorNum = maior(comparacao, 3);
+                    if (maiorNum < maxEsc)
                     {
-                        if (auxIter2 > maxIter)
-                        {
-                            if (auxIter2 < maxesc)
-                            {
-                                maxesc = auxIter2;
-                                auxesc = auxIter2;
-                            }
-                        }
-                        else
-                        {
-                            if (maxIter < maxesc)
-                            {
-                                maxesc = maxIter;
-                                auxesc = auxIter2;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (auxIter > maxIter)
-                        {
-                            if (auxIter < maxesc)
-                            {
-                                maxesc = auxIter;
-                                auxesc = auxIter2;
-                            }
-                        }
-                        else
-                        {
-                            if (maxIter < maxesc)
-                            {
-                                maxesc = maxIter;
-                                auxesc = auxIter2;
-                            }
-                        }
+                        maxEsc = maiorNum;
                     }
                     auxIter += distancia[cont4];
                 }
             }
-
-            aux[cont1][cont2] = auxesc;
-            max[cont1][cont2] = maxesc;
+            aux[cont1][cont2] = auxEsc;
+            max[cont1][cont2] = maxEsc;
         }
     }
     return max[n][k];

@@ -1,5 +1,7 @@
 #ifndef OPERACAO
 #define OPERACAO
-int somaPosicao(int vet[], int inicio, int fim);
+
+int soma(int vet[], int inicio, int fim);
+int maior(int vet[], int n);
 
 #endif
